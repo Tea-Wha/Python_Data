@@ -1,5 +1,6 @@
 # 데이터전처리 : 주어진 데이터를 분석에 적합하도록 가공하는 작업
 import pandas as pd
+import numpy as np
 exam = pd.read_csv('exam.csv')
 
 # query()를 사용해서 행 제한
@@ -47,3 +48,29 @@ print(exam.sort_values('math', ascending=False)) # 수학 성적 기준 오름 �
 
 # 여러 정렬 기준 적용하기
 print(exam.sort_values(['nclass', 'math'], ascending=[True, False]))
+
+# 파생변수 추가하기
+exam.assign(total=exam['math'] + exam['english'] + exam['science'])
+
+exam['total'] = exam['math'] + exam['english'] + exam['science']
+print(exam)
+
+print(exam.assign(test = np.where(exam['science'] >= 60, 'pass', 'fail')))
+
+# 체이닝 메서드 활용
+print(exam.assign(total = exam['math'] + exam['english'] + exam['science']).sort_values('total', ascending=False))
+
+# 1. mpg 데이터 복사본을 만들고, cty와 hwy를 더한 '합산 연비 변수'를 추가
+mpg_copy = mpg.copy()
+mpg_copy['합산 연비 변수'] = mpg_copy['cty'] + mpg_copy['hwy']
+print(mpg_copy)
+
+# 2. 앞에서 만든 '합산 연비 변수'를 2로 나눠 '평균 연비 변수'를 추가
+mpg_copy['평균 연비 변수'] = mpg_copy['합산 연비 변수']/2
+print(mpg_copy)
+
+# 3. '평균 연비 변수'가 가장 높은 자동차 3종 데이터 출력
+print(mpg_copy.sort_values('평균 연비 변수', ascending=False).head(3))
+
+# 4. 원본 변형하여 진행
+print(mpg.assign(합산연비변수=mpg['cty']+mpg['hwy'], 평균연비변수=(mpg['cty']+mpg['hwy'])/2).sort_values('평균연비변수',ascending=False).head(3))
